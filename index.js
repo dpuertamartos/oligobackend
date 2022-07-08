@@ -40,7 +40,7 @@ app.get('/api/oligos/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.delete('/api/notes/:id', (request, response, next) => {
+app.delete('/api/oligos/:id', (request, response, next) => {
   Oligo.findByIdAndRemove(request.params.id)
     .then(result => {
       response.status(204).end()
@@ -67,7 +67,7 @@ app.post('/api/oligos', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.put('/api/notes/:id', (request, response, next) => {
+app.put('/api/oligos/:id', (request, response, next) => {
   const body = request.body
 
   const oligo = {
