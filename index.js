@@ -1,90 +1,102 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
-const cors = require('cors')
+const mongoose = require('mongoose')
+const Oligo = require('./models/oligo')
 
-app.use(cors())
+
 app.use(express.static('build'))
 app.use(express.json())
 
 const requestLogger = (request, response, next) => {
-    console.log('Method:', request.method)
-    console.log('Path:  ', request.path)
-    console.log('Body:  ', request.body)
-    console.log('---')
-    next()
-  }
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
 
 app.use(requestLogger)
 
-let oligos = [
-    {   
-      date: "2022-05-30T17:30:31.098Z",  
-      id: 1,
-      sequence: "AATTGG"
-    },
-    {
-      date: "2022-05-30T17:30:31.098Z",  
-      id: 2,
-      sequence: "AAAGG"
-    }
-]
+app.get('/api/oligos', (request, response) => {
+  Oligo.find({}).then(oligos => {
+    response.json(oligos)
+  })
+})
+
 
 app.get('/', (request, response) => {
 response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/oligos', (request, response) => {
-response.json(oligos)
+
+app.get('/api/oligos/:id', (request, response, next) => {
+  Oligo.findById(request.params.id)
+    .then(oligo => {
+      oligo
+        ? response.json(oligo)
+        : response.status(404).end()
+    })
+    .catch(error => next(error))
 })
 
-app.get('/api/oligos/:id', (request, response) => {
-const id = Number(request.params.id)
-const note = notes.find(note => note.id === id)
-note 
-    ? response.json(note)
-    : response.status(404).end()
-
+app.delete('/api/notes/:id', (request, response, next) => {
+  Oligo.findByIdAndRemove(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
 })
-
-app.delete('/api/oligos/:id', (request, response) => {
-const id = Number(request.params.id)
-oligos = oligos.filter(oligo => oligo.id !== id)
-
-response.status(204).end()
-})
-
-const generateId = () => {
-const maxId = oligos.length > 0
-    ? Math.max(...oligos.map(n => n.id))
-    : 0
-return maxId + 1
-}
 
 app.post('/api/oligos', (request, response) => {
-    const body = request.body
+  const body = request.body
 
-    if (!body.sequence) {
-        return response.status(400).json({ 
-        error: 'content missing' 
-        })
-    }
+  if (body.sequence === undefined) {
+    return response.status(400).json({ error: 'content missing' })
+  }
 
-    const oligo = {
-        date: new Date(),
-        id: generateId(),
-        sequence: body.sequence
-    }
+  const oligo = new Oligo({
+    date: new Date(),
+    sequence: body.sequence
+  })
 
-    oligos = oligos.concat(oligo)
+  oligo.save().then(savedOligo => {
+    response.json(savedOligo)
+  })
+})
 
-    response.json(oligo)
+app.put('/api/notes/:id', (request, response, next) => {
+  const body = request.body
+
+  const oligo = {
+    sequence: body.sequence
+  }
+
+  Oligo.findByIdAndUpdate(request.params.id, oligo, { new: true })
+    .then(updatedOligo => {
+      response.json(updatedOligo)
+    })
+    .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
-    response.status(404).send({ error: 'unknown endpoint' })
-  }
-  
-  app.use(unknownEndpoint)
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } 
+
+  next(error)
+}
+
+// this has to be the last loaded middleware.
+app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
