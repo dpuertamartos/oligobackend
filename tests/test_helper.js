@@ -1,4 +1,5 @@
 const Oligo = require('../models/oligo')
+const User = require('../models/user')
 
 const initialOligos = [
     {
@@ -24,6 +25,11 @@ const oligosInDb = async () => {
   return oligos.map(o => o.toJSON())
 }
 
+const usersInDb = async () => {
+    const users = await User.find({})
+    return users.map(u => u.toJSON())
+  }
+
 module.exports = {
-  initialOligos, nonExistingId, oligosInDb
+  initialOligos, nonExistingId, oligosInDb, usersInDb
 }

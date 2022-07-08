@@ -8,10 +8,10 @@ const Oligo = require('../models/oligo')
 
 beforeEach(async () => {
     await Oligo.deleteMany({})
-    let oligoObject = new Oligo(helper.initialOligos[0])
-    await oligoObject.save()
-    oligoObject = new Oligo(helper.initialOligos[1])
-    await oligoObject.save()
+    for (let o of helper.initialOligos) {
+        let oligoObject = new Oligo(o)
+        await oligoObject.save()
+    }
 },300000) 
 
 test('oligos are returned as json', async () => {

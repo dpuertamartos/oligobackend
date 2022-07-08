@@ -2,7 +2,11 @@ const mongoose = require('mongoose')
 
 const oligoSchema = new mongoose.Schema({
   date: {type: Date, required: true},
-  sequence: {type: String, minLength: 4, required: true}
+  sequence: {type: String, minLength: 4, required: true},
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 })
 
 oligoSchema.set('toJSON', {
