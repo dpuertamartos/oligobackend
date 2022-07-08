@@ -7,48 +7,31 @@ oligosRouter.get('/', async (request, response) => {
 })
    
 
-oligosRouter.get('/:id', async (request, response, next) => {
-    try {
-        const oligo = await Oligo.findById(request.params.id)
-        if (oligo) {
-          response.json(oligo)
-        } else {
-          response.status(404).end()
-        }
-    } 
-    catch(exception) {
-        next(exception)
-    }
+oligosRouter.get('/:id', async (request, response) => {
+    const oligo = await Oligo.findById(request.params.id)
+    if (oligo) {
+        response.json(oligo)
+    } else {
+        response.status(404).end()
+    }  
 })
 
-oligosRouter.delete('/:id', async (request, response, next) => {
-    try {
-        await Oligo.findByIdAndRemove(request.params.id)
-        response.status(204).end()
-    } 
-    catch (exception) {
-        next(exception)
-    }
+oligosRouter.delete('/:id', async (request, response) => {
+    await Oligo.findByIdAndRemove(request.params.id)
+    response.status(204).end() 
 })
 
-oligosRouter.post('/', async (request, response, next) => {
+oligosRouter.post('/', async (request, response) => {
     const body = request.body
-
-    /*  if (body.sequence === undefined) {
-        return response.status(400).json({ error: 'content missing' })
-    } */
 
     const oligo = new Oligo({
         date: new Date(),
         sequence: body.sequence
     })
-    try {
-        const savedO = await oligo.save()
-        response.status(201).json(savedO)    
-    }
-    catch(exception){
-        next(exception)
-    }  
+    
+    const savedO = await oligo.save()
+    response.status(201).json(savedO)    
+   
 })
 
 oligosRouter.put('/:id', (request, response, next) => {
