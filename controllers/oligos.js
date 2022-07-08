@@ -1,8 +1,9 @@
 const oligosRouter = require('express').Router()
 const Oligo = require('../models/oligo')
+const User = require('../models/user')
 
 oligosRouter.get('/', async (request, response) => {
-    const oligos = await Oligo.find({})
+    const oligos = await Oligo.find({}).populate('user', {name: 1})
     response.json(oligos)
 })
    
@@ -24,12 +25,17 @@ oligosRouter.delete('/:id', async (request, response) => {
 oligosRouter.post('/', async (request, response) => {
     const body = request.body
 
+    const user = await User.findById(body.userId)
+
     const oligo = new Oligo({
         date: new Date(),
-        sequence: body.sequence
+        sequence: body.sequence,
+        user: user._id
     })
     
     const savedO = await oligo.save()
+    user.oligos = user.oligos.concat(savedO._id)
+    await user.save()
     response.status(201).json(savedO)    
    
 })

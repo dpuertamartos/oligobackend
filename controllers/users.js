@@ -3,12 +3,14 @@ const usersRouter = require('express').Router()
 const User = require('../models/user')
 
 usersRouter.get('/', async (request, response) => {
-    const users = await User.find({})
+    const users = await User.find({}).populate('oligos', { sequence: 1 })
     response.json(users)
   })
-  
+
 usersRouter.post('/', async (request, response) => {
   const { username, name, password } = request.body
+
+  console.log(username,name,password)
 
   const existingUser = await User.findOne({ username })
     if (existingUser) {
@@ -19,6 +21,7 @@ usersRouter.post('/', async (request, response) => {
 
   const saltRounds = 10
   const passwordHash = await bcrypt.hash(password, saltRounds)
+  console.log(passwordHash)
 
   const user = new User({
     username,
