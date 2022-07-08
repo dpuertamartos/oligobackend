@@ -1,48 +1,54 @@
 const oligosRouter = require('express').Router()
 const Oligo = require('../models/oligo')
 
-oligosRouter.get('/', (request, response) => {
-    Oligo.find({}).then(oligos => {
-      response.json(oligos)
-    })
-  })
+oligosRouter.get('/', async (request, response) => {
+    const oligos = await Oligo.find({})
+    response.json(oligos)
+})
    
 
-oligosRouter.get('/:id', (request, response, next) => {
-    Oligo.findById(request.params.id)
-        .then(oligo => {
-        oligo
-            ? response.json(oligo)
-            : response.status(404).end()
-        })
-        .catch(error => next(error))
+oligosRouter.get('/:id', async (request, response, next) => {
+    try {
+        const oligo = await Oligo.findById(request.params.id)
+        if (oligo) {
+          response.json(oligo)
+        } else {
+          response.status(404).end()
+        }
+    } 
+    catch(exception) {
+        next(exception)
+    }
 })
 
-oligosRouter.delete('/:id', (request, response, next) => {
-    Oligo.findByIdAndRemove(request.params.id)
-        .then(result => {
+oligosRouter.delete('/:id', async (request, response, next) => {
+    try {
+        await Oligo.findByIdAndRemove(request.params.id)
         response.status(204).end()
-        })
-        .catch(error => next(error))
+    } 
+    catch (exception) {
+        next(exception)
+    }
 })
 
-oligosRouter.post('/', (request, response, next) => {
+oligosRouter.post('/', async (request, response, next) => {
     const body = request.body
 
-    if (body.sequence === undefined) {
+    /*  if (body.sequence === undefined) {
         return response.status(400).json({ error: 'content missing' })
-    }
+    } */
 
     const oligo = new Oligo({
         date: new Date(),
         sequence: body.sequence
     })
-
-    oligo.save()
-        .then(savedOligo => {
-        response.json(savedOligo)
-        })
-        .catch(error => next(error))
+    try {
+        const savedO = await oligo.save()
+        response.status(201).json(savedO)    
+    }
+    catch(exception){
+        next(exception)
+    }  
 })
 
 oligosRouter.put('/:id', (request, response, next) => {
