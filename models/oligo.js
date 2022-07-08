@@ -13,8 +13,8 @@ mongoose.connect(url)
   })
 
 const oligoSchema = new mongoose.Schema({
-  date: Date,
-  sequence: String
+  date: {type: Date, required: true},
+  sequence: {type: String, minLength: 4, required: true}
 })
 
 oligoSchema.set('toJSON', {

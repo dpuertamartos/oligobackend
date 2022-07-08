@@ -48,7 +48,7 @@ app.delete('/api/notes/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.post('/api/oligos', (request, response) => {
+app.post('/api/oligos', (request, response, next) => {
   const body = request.body
 
   if (body.sequence === undefined) {
@@ -60,9 +60,11 @@ app.post('/api/oligos', (request, response) => {
     sequence: body.sequence
   })
 
-  oligo.save().then(savedOligo => {
-    response.json(savedOligo)
-  })
+  oligo.save()
+    .then(savedOligo => {
+      response.json(savedOligo)
+    })
+    .catch(error => next(error))
 })
 
 app.put('/api/notes/:id', (request, response, next) => {
@@ -72,7 +74,8 @@ app.put('/api/notes/:id', (request, response, next) => {
     sequence: body.sequence
   }
 
-  Oligo.findByIdAndUpdate(request.params.id, oligo, { new: true })
+  Oligo.findByIdAndUpdate(
+    request.params.id, oligo, { new: true, runValidators: true, context: 'query' })
     .then(updatedOligo => {
       response.json(updatedOligo)
     })
@@ -91,6 +94,9 @@ const errorHandler = (error, request, response, next) => {
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
   } 
+  else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message})
+  }
 
   next(error)
 }
