@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/genes HTTP/1.1
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhdmlkMiIsImlkIjoiNjJjOTRlMzA2YmM2ZWFjNWNhMTI5OTQxIiwiaWF0IjoxNjU3NDYwMjk4LCJleHAiOjE2NTc0NzEwOTh9.TkRziM3ykO9S-2dgpWP_XKRuiQaFsT-s8p1-fm05PfA
+
+{   
+    "name": "FZR-1",
+    "description": "buen gen",
+    "sequence": "ATTGGTGGGGTTTGG",
+    "organism": "Caenorhabditis elegans"
+}
