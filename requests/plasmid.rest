@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/plasmids HTTP/1.1
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhdmlkMiIsImlkIjoiNjJjOTRlMzA2YmM2ZWFjNWNhMTI5OTQxIiwiaWF0IjoxNjU3NDYwMjk4LCJleHAiOjE2NTc0NzEwOTh9.TkRziM3ykO9S-2dgpWP_XKRuiQaFsT-s8p1-fm05PfA
+
+{   
+    "name": "FZR-1 GFP14",
+    "description": "buen plasmido",
+    "sequence": "ATTGGTGGGGTTTGG",
+    "genes": "[62cad685be4743ca4ce9049b,62cad6642c92b223e6406c5a]"
+}
