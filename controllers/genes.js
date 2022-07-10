@@ -11,7 +11,9 @@ const getTokenFrom = request => {
   }
 
 genesRouter.get('/', async (request, response) => {
-    const genes = await Gene.find({}).populate('oligos', {sequence: 1})
+    const genes = await Gene.find({})
+        .populate('oligos', {sequence: 1})
+        .populate('plasmids', {name: 1})
     response.json(genes)
 })
    

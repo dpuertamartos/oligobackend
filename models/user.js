@@ -10,6 +10,12 @@ const userSchema = new mongoose.Schema({
       ref: 'Oligo'
     }
   ],
+  plasmids: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Plasmid'
+    }
+  ]
 })
 
 userSchema.set('toJSON', {

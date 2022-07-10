@@ -1,8 +1,9 @@
 const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator');
 
 const plasmidSchema = new mongoose.Schema({
   date: {type: Date, required: true},
-  name: {type: String, minLength: 2},
+  name: {type: String, minLength: 2, required: true, unique: true},
   description: {type: String, minLength: 2},
   sequence: {type: String, minLength: 4, required: true},
   user: {
@@ -30,5 +31,7 @@ plasmidSchema.set('toJSON', {
     delete returnedObject.__v
   }
 })
+
+plasmidSchema.plugin(uniqueValidator)
 
 module.exports = mongoose.model('Plasmid', plasmidSchema)

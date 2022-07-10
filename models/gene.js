@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator');
-// make gene name unique
+
 const geneSchema = new mongoose.Schema({
   date: {type: Date, required: true},
   name: {type: String, minLength: 2, required: true, unique: true},
