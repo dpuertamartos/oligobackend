@@ -1,0 +1,10 @@
+POST http://localhost:3001/api/oligos HTTP/1.1
+content-type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImRhdmlkMiIsImlkIjoiNjJjOTRlMzA2YmM2ZWFjNWNhMTI5OTQxIiwiaWF0IjoxNjU3NDcxMjg1LCJleHAiOjE2NTc0ODIwODV9.L7WGm6afSYOXPau0gDVNBiLZRunReTYszVZIOee9Ydc
+
+{   
+    "name": "FZR-1  F234",
+    "sequence": "ATTGGTGGGGTTTGGG",
+    "genes": "[62cad685be4743ca4ce9049b]",
+    "plasmids": "[62caebf2c3e7a3eae337096f,62caec3cf575e79ea88a8988]"
+}

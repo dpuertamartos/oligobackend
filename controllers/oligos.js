@@ -1,7 +1,10 @@
 const oligosRouter = require('express').Router()
 const Oligo = require('../models/oligo')
 const User = require('../models/user')
+const Gene = require('../models/gene')
+const Plasmid = require('../models/plasmid')
 const jwt = require('jsonwebtoken')
+const gene = require('../models/gene')
 
 const getTokenFrom = request => {
     const authorization = request.get('authorization')
@@ -12,7 +15,10 @@ const getTokenFrom = request => {
   }
 
 oligosRouter.get('/', async (request, response) => {
-    const oligos = await Oligo.find({}).populate('user', {name: 1})
+    const oligos = await Oligo.find({})
+        .populate('user', {name: 1})
+        .populate('plasmids', {name: 1})
+        .populate('genes', {name: 1})
     response.json(oligos)
 })
    
@@ -41,15 +47,37 @@ oligosRouter.post('/', async (request, response) => {
     }
     const user = await User.findById(decodedToken.id)
 
+    if(body.genes){
+        console.log(body.genes)
+        body.genes = body.genes.replace(/\[|\]/g,'').split(',')
+        console.log(body.genes)
+    }
+    else{body.genes = []}
+    if(body.plasmids){body.plasmids = body.plasmids.replace(/\[|\]/g,'').split(',')}
+    else{body.plasmids = []}
+
     const oligo = new Oligo({
         date: new Date(),
+        name: body.name,
         sequence: body.sequence,
-        user: user._id
+        user: user._id,
+        genes: body.genes,
+        plasmids: body.plasmids
     })
     
     const savedO = await oligo.save()
     user.oligos = user.oligos.concat(savedO._id)
     await user.save()
+    for(let id of body.genes){
+        const gene = await Gene.findById(id)
+        gene.oligos = gene.oligos.concat(savedO._id)
+        gene.save()
+    }
+    for(let id of body.plasmids){
+        const plasmid = await Plasmid.findById(id)
+        plasmid.oligos = plasmid.oligos.concat(savedO._id)
+        plasmid.save()
+    }
     response.status(201).json(savedO)    
    
 })
