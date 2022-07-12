@@ -43,27 +43,25 @@ plasmidsRouter.post('/', async (request, response) => {
         return response.status(401).json({ error: 'token missing or invalid' })
     }
     const user = await User.findById(decodedToken.id)
-
-    
-    console.log(body.genes, typeof body.genes)
-    
     // convert string array into array of strings
-    let a = body.genes
-    a = a.replace(/\[|\]/g,'').split(',')
-
+    if(body.genes){
+        body.genes = body.genes.replace(/\[|\]/g,'').split(',')
+    }
+    else{body.genes = []}
+   
     const plasmid = new Plasmid({
         date: new Date(),
         name: body.name,
         description: body.description,
         sequence: body.sequence,
         user: user._id,
-        genes: a,
+        genes: body.genes,
     })
     
     const savedp = await plasmid.save()
     user.plasmids = user.plasmids.concat(savedp._id)
     await user.save()
-    for(id of a){
+    for(id of body.genes){
         const gene = await Gene.findById(id)
         gene.plasmids = gene.plasmids.concat(savedp._id)
         await gene.save()
