@@ -74,7 +74,8 @@ plasmidsRouter.put('/:id', (request, response, next) => {
     const body = request.body
 
     const plasmid = {
-        sequence: body.sequence
+        sequence: body.sequence,
+        name: body.name
     }
 
     Plasmid.findByIdAndUpdate(
