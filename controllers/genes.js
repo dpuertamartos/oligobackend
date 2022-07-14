@@ -58,6 +58,7 @@ genesRouter.put('/:id', (request, response, next) => {
     const body = request.body
 
     const gene = {
+        name: body.name,
         sequence: body.sequence
     }
 
